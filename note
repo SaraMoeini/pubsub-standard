@@ -1,0 +1,56 @@
+# YOUR_PROJECT_ID=pubsub-standard
+ 
+gcloud projects create [YOUR_PROJECT_ID] --set-as-default
+gcloud projects describe [YOUR_PROJECT_ID]
+gcloud app create --project=[YOUR_PROJECT_ID]
+gcloud components install app-engine-java
+    ERROR: (gcloud.components.install) 
+    You cannot perform this action because the Cloud SDK component manager 
+    is disabled for this installation. You can run the following command 
+    to achieve the same result for this installation: 
+
+sudo apt-get install google-cloud-sdk-app-engine-java
+
+****************
+# Cloning the sample app
+
+git clone https://github.com/GoogleCloudPlatform/java-docs-samples
+cd java-docs-samples/appengine-java8/pubsub
+
+****************
+# Creating a topic and subscription
+
+gcloud pubsub topics create standardTopic
+gcloud pubsub subscriptions create standardSubscription \
+    --topic standardTopic \
+    --push-endpoint \
+    https://pubsub-standard.appspot.com/pubsub/push?token=standardToken \
+    --ack-deadline 10
+****************
+# Running the sample locally
+# Assuming you set up your environment as described in Prerequisites, you have already run the gcloud init command, 
+# which provides this authentication.
+mvn clean package
+
+# Then set environment variables before starting your application:
+export PUBSUB_VERIFICATION_TOKEN=standardToken export PUBSUB_TOPIC=standardTopic mvn appengine:run
+
+**************************
+# Add Project-Id in POM:
+<plugin>
+  <groupId>com.google.cloud.tools</groupId>
+  <artifactId>appengine-maven-plugin</artifactId>
+  <version>2.0.0-rc2</version>
+  <configuration>
+    <deploy.projectId>something</deploy.projectId>
+    <deploy.version>something</deploy.version>
+  </configuration>
+</plugin>
+*****************************************************************
+# Exécuter sur App Engine:
+# exécutez la commande suivante :
+
+mvn appengine:deploy
+
+******************************
+https://pubsub-standard.appspot.com/
